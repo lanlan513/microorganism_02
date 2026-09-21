@@ -116,11 +116,12 @@
     text-shadow: 0 0 20px rgba(0, 255, 200, 0.5), 0 0 40px rgba(0, 255, 200, 0.3);
   }
 
-  .bg-grid-pattern {
-    background-image:
-      linear-gradient(rgba(0, 255, 200, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 255, 200, 0.03) 1px, transparent 1px);
-    background-size: 50px 50px;
+  .gram-filter-deuteranopia svg {
+    filter: url("#gram-deuteranopia-filter");
+  }
+
+  .gram-filter-grayscale svg {
+    filter: grayscale(1) contrast(1.15);
   }
 }
 

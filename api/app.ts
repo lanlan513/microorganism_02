@@ -17,6 +17,8 @@ app.get('/', (_req, res) => {
       'GET /api/microbes/category/:category': '按分类获取微生物',
       'GET /api/microbes/:id/related': '获取相关微生物',
       'GET /api/stats': '获取统计数据',
+      'POST /api/gram/sessions': '创建革兰染色实验会话',
+      'GET /api/gram/sessions/:id/replay?at=timestamp': '按操作日志原样重放画面',
     },
   });
 });

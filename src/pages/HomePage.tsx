@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, Sparkles, Microscope, Globe2 } from 'lucide-react';
+import { ChevronDown, Sparkles, Microscope } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { MicrobeCard } from '../components/MicrobeCard';
 import { CategoryCard } from '../components/CategoryCard';
@@ -52,14 +52,14 @@ export function HomePage() {
             </p>
 
             <div className="animate-fade-in-up stagger-4 opacity-0 flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-              <Link to="/category/bacteria" className="btn-primary">
+              <Link to="/lab/gram" className="btn-primary">
                 <Microscope className="w-5 h-5" />
-                开始探索
+                开始革兰染色实验
               </Link>
-              <a href="#categories" className="btn-primary-ghost">
-                <Globe2 className="w-4 h-4" />
-                四大分类
-              </a>
+              <Link to="/category/bacteria" className="btn-primary-ghost">
+                <Microscope className="w-4 h-4" />
+                浏览细菌标本
+              </Link>
             </div>
           </div>
 

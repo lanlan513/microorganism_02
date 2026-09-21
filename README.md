@@ -1,57 +1,78 @@
-# React + TypeScript + Vite
+# 微生物文明馆
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一个基于 React + TypeScript + Vite 的微生物科普项目，包含馆藏浏览和一个**服务端权威的革兰染色实验**。
 
-Currently, two official plugins are available:
+## 革兰染色实验
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+入口：`/lab/gram`
 
-## Expanding the ESLint configuration
+### 信任边界
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+前端只做三件事：
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+1. 发送 `start` / `stop` 试剂操作；
+2. 根据服务端返回的事件日志和公开动力学参数做确定性渲染；
+3. 展示服务端算出的结论、分数和审计信息。
+
+以下信息不能由前端决定：
+
+- 真实菌种和细胞壁类型；
+- 每步真实接触秒数，由服务端用两组事件的接收时间计算；
+- 跳步、重复滴加、重叠滴加、脱色中超时等序列合法性；
+- 细胞最终颜色；
+- 革兰阳性 / 革兰阴性 / 非细菌的判定与分数；
+- 事后重放日志和校验和。
+
+前端篡改状态只能改变本地显示，不能改变服务端日志；最终分数只由服务端依据“操作序列 + 每步时长 + 隐藏细胞壁类型”计算。
+
+### 颜色模型
+
+颜色不是 CSS 颜色插值。每种染料被表示为 400–700 nm 的光谱吸光度，多层染料按 Beer–Lambert 规律做透射率相乘：
+
+```text
+T(λ) = 10^-A(λ)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+随后通过 CIE 1931 标准观察者三刺激值转换为 sRGB。相关确定性代码位于：
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `shared/gram/color.ts`
+- `shared/gram/chemistry.ts`
+- `shared/gram/scoring.ts`
 
-export default tseslint.config({
-  extends: [
-    // other configs...
-    // Enable lint rules for React
-    reactX.configs['recommended-typescript'],
-    // Enable lint rules for React DOM
-    reactDom.configs.recommended,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### 可访问性
+
+结论同时通过三条通道表达：
+
+- 文字：`G+ 阳性`、`G− 阴性`、`F 非细菌`；
+- 纹理：阳性点状、阴性短线、非细菌斜纹；
+- 字符：`+`、`−`、`F`。
+
+页面内置红色盲、绿色盲、蓝色盲 SVG 模拟滤镜。两种细菌结论在滤镜下不能只依赖红/紫颜色。
+
+### 边界处理
+
+- 跳步：致命错误，玻片作废，不能静默通过；
+- 已完成步骤重复滴加：致命错误；
+- 当前试剂未结束就改滴别的试剂：致命错误；
+- 当前试剂未结束重复点开始：拒绝并提示，不写入化学日志；
+- 酒精脱色过短 / 过长会真实改变 CV-I 保留量和最终画面；
+- 真菌可通过出芽、大卵圆形形态识别，不能判成革兰阳性或阴性；
+- 会话 ID 保存在 `localStorage`，刷新后向服务端恢复同一实验；
+- 判定后开放带 SHA-256 校验和的日志重放。
+
+## 本地开发
+
+```bash
+npm install
+npm run dev
+```
+
+Vite 会把 `/api` 代理到 `http://localhost:3001`。
+
+其他命令：
+
+```bash
+npm run check   # TypeScript 检查
+npm run lint    # ESLint
+npm run build   # 生产构建
 ```

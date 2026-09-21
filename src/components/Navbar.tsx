@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Dna, Search, Menu, X } from 'lucide-react';
+import { Home, Dna, Search, Menu, X, FlaskConical } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export function Navbar() {
@@ -18,6 +18,7 @@ export function Navbar() {
     { to: '/category/bacteria', label: '细菌', icon: Dna },
     { to: '/category/fungi', label: '真菌', icon: Dna },
     { to: '/category/virus', label: '病毒', icon: Dna },
+    { to: '/lab/gram', label: '革兰实验', icon: FlaskConical },
     { to: '/category/archaea', label: '古菌', icon: Dna },
   ];
 
